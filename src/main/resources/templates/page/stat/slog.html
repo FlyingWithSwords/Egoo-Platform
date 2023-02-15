@@ -1,0 +1,129 @@
+<style>
+    .top-panel {border:1px solid #eceff9;border-radius:5px;text-align:center;}
+    .top-panel > .layui-card-body {height:60px;}
+    .top-panel-number {line-height:60px;font-size:30px;border-right:1px solid #eceff9;}
+    .top-panel-tips {line-height:30px;font-size:12px}
+</style>
+<div class="layuimini-container layuimini-page-anim">
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md12">
+            <div id="echarts-dataset" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+
+    </div>
+
+
+</div>
+</div>
+<script>
+    layui.use(['layer','echarts'], function () {
+        var $ = layui.jquery,
+            echarts = layui.echarts;
+
+        /**
+         * 报表功能
+         */
+
+        $.ajax({
+            url:"slog/stat?type=substring(dtime,1,10)&where=where sid="+localStorage.getItem('userid'),
+            type:"POST",
+            dataType:"json",
+            success:function(data){
+
+                // debugger
+                var str="";
+                for (var p in  data){
+                    str=str+data[p].name+",";
+                }
+                str=str.substring(0,str.length-1);
+                var strResult=str.split(",");
+
+                var str2="";
+                for (var p in  data){
+                    str2=str2+data[p].counts+",";
+                }
+                str2=str2.substring(0,str2.length-1);
+                var strResult2=str2.split(",");
+
+                /**
+                 * 柱状图
+                 */
+                var echartsDataset = echarts.init(document.getElementById('echarts-dataset'), 'walden');
+
+                var optionDataset = {
+                    title: {
+                        text: '商家收益统计图',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        }
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left'
+                    },
+                    dataset: {
+                        source: [
+                            {
+                                name: '收益',
+                                type: 'line',
+                                stack: '总量',
+                                areaStyle: {},
+                                data: strResult2
+                            }
+                        ]
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: strResult
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    // Declare several bar series, each will be mapped
+                    // to a column of dataset.source by default.
+                    series: [
+                        {
+                            name: '收益',
+                            type: 'line',
+                            stack: '总量',
+                            areaStyle: {},
+                            data: strResult2
+                        }
+                    ]
+                };
+
+                echartsDataset.setOption(optionDataset);
+
+                // echarts 窗口缩放自适应
+                window.onresize = function () {
+                    echartsDataset.resize();
+                }
+            }
+        })
+
+    });
+</script>

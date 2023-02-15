@@ -1,0 +1,595 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>乐器商城</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/html/css/layui.css" media="all">
+    <link rel="stylesheet" href="/html/css/modules/code.css" media="all">
+    <link rel="stylesheet" href="/html/css/modules/laydate/default/laydate.css" media="all">
+    <link rel="stylesheet" href="/html/css/modules/layer/default/layer.css" media="all">
+    <!--<script src="https://webapi.amap.com/maps?v=2.0&key=49a29cfa2e7dbeb15454a68ca1a4d959"></script>-->
+    <script src="/html/js/jquery-3.4.1.js" charset="utf-8"></script>
+    <script src="/html/js/layui.js" charset="utf-8"></script>
+    <style>
+        .layui-flow-more {
+            clear: both;
+        }
+        .typee {
+            width: 500px;
+            overflow: auto;
+        }
+        .table .th{
+            display: flex;
+            height:146px;
+            border-bottom: 1px dashed #dbdbdb;
+        }
+        .table .tr:first-child{
+            display: flex;
+            text-align: center;
+        }
+        .table .th:nth-last-child(3){
+            border-bottom: none;
+        }
+
+        .table .tr{
+            height:40px;
+            line-height: 40px;
+            background: #e9e9e9;
+            border-bottom: none;
+        }
+        .table .th:last-child{
+            display: block;
+        }
+        .table .th div:nth-child(1),.table .tr:first-child div:nth-child(1){
+            flex: 3;
+        }
+        .table .th div:nth-child(2),.table .tr:first-child div:nth-child(2){
+            flex: 1;
+        }
+        .table .th div:nth-child(3),.table .tr:first-child div:nth-child(3){
+            flex: 2;
+        }
+        .table .th div:nth-child(4),.table .tr:first-child div:nth-child(4){
+            flex: 1;
+        }
+        .table .th div:nth-child(5),.table .tr:first-child div:nth-child(5){
+            flex: 1;
+        }
+        .table .th .price{
+            line-height:146px;
+        }
+        .table .th .pro{
+            text-align:left;
+        }
+        .table .th .pro dl{
+            margin-top:13px;
+        }
+        .table .th .pro dl dt{
+            margin-right:13px;
+        }
+        .table .th .pro dl dd{
+            position: relative;
+            color:#777;
+            padding:0 10px 10px;
+        }
+        .table .th .pro dl dd span.edit{
+            position: absolute;
+            right:0;
+            bottom:0;
+            color:#C10000;
+        }
+        .table .th .pro dl dd div.change{
+            position: absolute;
+            right:0;
+            top:-10px;
+            width:300px;
+            height:300px;
+            background: #fff;
+            display: none;
+        }
+        .table .th .pro dl dd.on{
+            border:1px dashed #C10000;
+        }
+        .table .th .pro dl dd p{
+            line-height: 20px;
+        }
+        .table .th .pro dl dd p:nth-child(1){
+            color:#262626;
+            line-height: 40px;
+        }
+        .table .th .number p{
+            width:81px;
+            margin:60px auto 0;
+        }
+        .table .th .number p span{
+            width:27px;
+            height:27px;
+            line-height:27px;
+            text-align: center;
+        }
+        .table label{
+            width: 16px;
+            height: 16px;
+            margin:65px 17px 0 20px;
+            position: relative;
+        }
+        .table .tr label{
+            margin:13px 17px 0 20px;
+        }
+        .table  label input[type="checkbox"]{
+            opacity: 0;
+            width:16px;
+            height:16px;
+            position: absolute;
+        }
+        .table  label input + span{
+            position: absolute;
+            left:0;
+            top:0;
+            width:16px;
+            height:16px;
+        }
+        .table  label input + span::before{
+            position: relative;
+            top: -12px;
+            font-family: layui-icon!important;
+            font-size: 18px;
+            content: '\e63f';
+        }
+        .table  label input[type=checkbox]:checked + span{
+            position: absolute;
+            left:0;
+            top:0;
+            width:16px;
+            height:16px;
+        }
+        .table  label input[type=checkbox]:checked + span::before{
+            position: relative;
+            top: -12px;
+            font-family: layui-icon!important;
+            font-size: 18px;
+            content: '\1005';
+        }
+        .table .tr p:last-child a,
+        .table .tr p:last-child span{
+            float: left;
+        }
+        .table .tr p:last-child span:first-child{
+            margin-right:90px;
+            color: #777;
+        }
+        .table .tr p:last-child a{
+            margin-left:40px;
+            width:150px;
+            text-align: center;
+            color: #fff;
+            background: #8e8e8e;
+        }
+        .table .tr p small{
+            color: #c10000;
+        }
+        .table .tr p .del{
+            margin-left:20px;
+        }
+        .table .goOn{
+            height:500px;
+            line-height:500px;
+            font-size: 16px;
+            color:#666;
+            text-align: center;
+        }
+        .table .goOn a{
+            color: #C10000;
+            text-decoration: underline;
+        }
+        .title {
+            width: 200px;
+            height: 40px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .clearfix {
+            zoom: 1;
+        }
+        .fl {
+            float: left;
+        }
+        .fr {
+            float: right;
+        }
+        .table {
+            text-align: center;
+        }
+        dt img {
+            width: 120px;
+        }
+    </style>
+</head>
+<body class="layui-layout-body" style="">
+<div id="top"></div>
+<div class="layui-layout layui-layout-admin site-demo-fixed">
+    <div class="layui-header header header-demo layui-bg-gray" summer>
+        <div class="layui-logo" style="width:auto; margin:0 25px;"><a href="" class="logo">
+            <img src="/images/logo.png" alt="logo" style="width: 50px;"/>
+            <span class="layui-nav-title" style="font-size: 18px;font-weight: bold">乐器商城</span>
+        </a></div>
+        <!-- 头部区域（可配合layui 已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left"><!-- 移动端显示 -->
+            <li class="layui-nav-item"><a href="index.html" style="color:#666;">首页</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;" style="color:#666;">分类</a>
+                <dl class="layui-nav-child layui-anim layui-anim-upbit typee">
+                </dl>
+            </li>
+            <li class="layui-nav-item layui-this"><a href="cart.html" style="color:#666;">购物车</a>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right" style="padding: 0 9px;">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <i class="layui-icon layui-icon-user layui-nav-img" style="color: #fff; padding: 10px; background: #9f9f9f;"></i>
+                    <i class="layui-icon layui-icon-down layui-nav-more"></i></a>
+                <dl class="layui-nav-child layui-anim layui-anim-upbit">
+                    <dd><a href="/login.html" id="login">登录</a></dd>
+                    <dd><a href="/register.html" id="register">注册</a></dd>
+                    <dd><a href="/loginOut" id="loginout" style="display: none;" onclick="loginOut()">退出登录</a></dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="layui-body" style="position: relative;top:72px;left:0px;padding: 0 50px;">
+
+    <div class="layui-form layuimini-form cartform" lay-filter="updateSubmit">
+        <div class="layui-form-item">
+            <label class="layui-form-label">地址</label>
+            <div class="layui-input-block">
+                <select name="address" lay-verify="required" id="address" lay-search="">
+                    <option value="">请选择你的地址</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">支付方式</label>
+            <div class="layui-input-block">
+                <select name="payway" id="payway" lay-verify="required" >
+                    <option value="微信">微信</option>
+                    <option value="支付宝">支付宝</option>
+                    <option value="银行卡">银行卡</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="table wrapper cartlist">
+        <div class="tr">
+            <div>商品</div>
+            <div>单价</div>
+            <div>数量</div>
+            <div>小计</div>
+            <div>操作</div>
+        </div>
+        <div class="tr clearfix">
+            <label class="fl">
+                <input class="checkAll" type="checkbox"/>
+                <span></span>
+            </label>
+            <p class="fr">
+                <span>共<small id="sl">0</small>件商品</span>
+                <span>合计:&nbsp;<small id="all">￥0.00</small></span>
+                <a href="success.html" class="count">结算</a>
+            </p>
+        </div>
+    </div>
+</div>
+<div class="layadmin-body-shade" layadmin-event="shade"></div>
+</body>
+<script src="js/public.js" charset="utf-8"></script>
+<script>
+    var userid = localStorage.getItem('userid');
+    layui.use(['form','element'], function () {
+        var $ = layui.jquery,
+        form = layui.form;
+
+        $(function(){
+            if(userid) {
+                $.ajax({
+                    url: '/cart/queryCartAll?state=0&uid=' + userid,
+                    success: function (data) {
+                        if (data.code == 0) {
+                            var datas = data.data, carthtml = '';
+                            $('.cartlist').html('<div class="tr">\n' +
+                                '            <div>商品</div>\n' +
+                                '            <div>单价</div>\n' +
+                                '            <div>数量</div>\n' +
+                                '            <div>小计</div>\n' +
+                                '            <div>操作</div>\n' +
+                                '        </div>');
+                            for (var i = 0; i < datas.length; i++) {
+                                carthtml += '<div class="th">\n' +
+                                    '            <div class="pro clearfix">\n' +
+                                    '                <label class="fl">\n' +
+                                    '                    <input type="checkbox" id="' + datas[i].id + '-'+datas[i].cid+'-'+datas[i].commodity.sellid+'-'+datas[i].commodity.num+'"/>\n' +
+                                    '                    <span></span>\n' +
+                                    '                </label>\n' +
+                                    '                <a class="fl" href="detail.html">\n' +
+                                    '                    <dl class="clearfix">\n' +
+                                    '                        <dt class="fl"><img src="' + datas[i].commodity.img + '" style="border-radius: 0.5em;"></dt>\n' +
+                                    '                        <dd class="fl">\n' +
+                                    '                            <p class="title">' + datas[i].commodity.name + '</p>\n' +
+                                    '                            <p>分类:</p>\n' +
+                                    '                            <p>' + datas[i].commodity.typee + '</p>\n' +
+                                    '                        </dd>\n' +
+                                    '                    </dl>\n' +
+                                    '                </a>\n' +
+                                    '            </div>\n' +
+                                    '            <div class="price" id="p-' + datas[i].id + '">￥' + datas[i].commodity.price + '</div>\n' +
+                                    '            <div class="number">\n' +
+                                    '                <p class="num clearfix">\n' +
+                                    '                    <i class="layui-icon layui-icon-subtraction sub" onclick="sub(1)"></i>\n' +
+                                    '                    <span id="nid-' + datas[i].id + '">1</span>\n' +
+                                    '                    <i class="layui-icon layui-icon-addition add" onclick="add(1)"></i>\n' +
+                                    '                </p>\n' +
+                                    '            </div>\n' +
+                                    '            <div class="price sAll" id="total-' + datas[i].id + '">￥' + datas[i].commodity.price + '</div>\n' +
+                                    '            <div class="price"><a class="del" href="javascript:;" id="del-' + datas[i].id + '">移除</a></div>\n' +
+                                    '        </div>';
+                            }
+                            carthtml += '<div class="goOn" id="goOn">空空如也~<a href="index.html">去逛逛</a></div>        <div class="tr clearfix">\n' +
+                                '            <label class="fl">\n' +
+                                '                <input class="checkAll" type="checkbox"/>\n' +
+                                '                <span></span>\n' +
+                                '            </label>\n' +
+                                '            <p class="fr">\n' +
+                                '                <span>共<small id="sl">0</small>件商品</span>\n' +
+                                '                <span>合计:&nbsp;<small id="all">￥0.00</small></span>\n' +
+                                '                <a href="javascript:;" class="count">结算</a>\n' +
+                                '            </p>\n' +
+                                '        </div>';
+                            $('.cartlist').append(carthtml);
+                            if(datas.length>0)
+                                $('#goOn').hide();
+
+                            //查询所有的用户信息并渲染到select中
+                            $.post("/address/queryAddressAll?uid=" + userid, {}, function (data) {
+                                var list = data;
+                                var select = document.getElementById("address");
+                                if (list != null || list.size() > 0) {
+                                    for (var i = 0; i < list.data.length; i++) {
+                                        var option = document.createElement("option");
+                                        option.setAttribute("value", list.data[i].content);
+                                        option.innerText = list.data[i].content;
+                                        select.appendChild(option);
+                                    }
+                                }
+                                form.render('select');
+                            }, "json");
+                        }
+                        return false;
+                    }
+                });
+            }
+            else
+                $('.cartform').hide();
+
+            /**************数量加减***************/
+            $(".num .sub").click(function(){
+                var num = parseInt($(this).siblings("span").text());
+                if(num<=1){
+                    $(this).attr("disabled","disabled");
+                }else{
+                    num--;
+                    $(this).siblings("span").text(num);
+                    //获取除了货币符号以外的数字
+                    var price = $(this).parents(".number").prev().text().substring(1);
+                    //单价和数量相乘并保留两位小数
+                    $(this).parents(".th").find(".sAll").text('￥'+(num*price).toFixed(2));
+                    jisuan();
+                    zg();
+                }
+            });
+            $(".num .add").click(function(){
+                var num = parseInt($(this).siblings("span").text());
+                if(num>=5){
+                    confirm("限购5件");
+                }else{
+                    num++;
+                    $(this).siblings("span").text(num);
+                    var price = $(this).parents(".number").prev().text().substring(1);
+                    $(this).parents(".th").find(".sAll").text('￥'+(num*price).toFixed(2));
+                    jisuan();
+                    zg();
+                }
+            });
+            //计算总价
+            function jisuan(){
+                var all=0;
+                var len =$(".th input[type='checkbox']:checked").length;
+                if(len==0){
+                    $("#all").text('￥'+parseFloat(0).toFixed(2));
+                }else{
+                    $(".th input[type='checkbox']:checked").each(function(){
+                        //获取小计里的数值
+                        var sAll = $(this).parents(".pro").siblings('.sAll').text().substring(1);
+                        //累加
+                        all+=parseFloat(sAll);
+                        //赋值
+                        $("#all").text('￥'+all.toFixed(2));
+                    })
+                }
+
+            }
+            //计算总共几件商品
+            function zg(){
+                var zsl = 0;
+                var index = $(".th input[type='checkbox']:checked").parents(".th").find(".num span");
+                var len =index.length;
+                if(len==0){
+                    $("#sl").text(0);
+                }else{
+                    index.each(function(){
+                        zsl+=parseInt($(this).text());
+                        $("#sl").text(zsl);
+                    })
+                }
+                if($("#sl").text()>0){
+                    $(".count").css("background","#c10000");
+                }else{
+                    $(".count").css("background","#8e8e8e");
+                }
+            }
+            /*****************商品全选***********************/
+            $("input[type='checkbox']").on('click',function(){
+                var sf = $(this).is(":checked");
+                var sc= $(this).hasClass("checkAll");
+                if(sf){
+                    if(sc){
+                        $("input[type='checkbox']").each(function(){
+                            this.checked=true;
+                        });
+                        zg();
+                        jisuan();
+                    }else{
+                        $(this).checked=true;
+                        var len = $("input[type='checkbox']:checked").length;
+                        var len1 = $("input").length-1;
+                        if(len==len1){
+                            $("input[type='checkbox']").each(function(){
+                                this.checked=true;
+                            });
+                        }
+                        zg();
+                        jisuan();
+                    }
+                }else{
+                    if(sc){
+                        $("input[type='checkbox']").each(function(){
+                            this.checked=false;
+                        });
+                        zg();
+                        jisuan();
+                    }else{
+                        $(this).checked=false;
+                        var len = $(".th input[type='checkbox']:checked").length;
+                        var len1 = $("input").length-1;
+                        if(len<len1){
+                            $('.checkAll').attr("checked",false);
+                        }
+                        zg();
+                        jisuan();
+                    }
+                }
+
+            });
+            /****************************proDetail 加入购物车*******************************/
+            $(".btns .cart").click(function(){
+                if($(".categ p").hasClass("on")){
+                    var num = parseInt($(".num span").text());
+                    var num1 = parseInt($(".goCart span").text());
+                    $(".goCart span").text(num+num1);
+                }
+            });
+
+            $('.count').click(function () {
+                $("input[type='checkbox']:checked").each(function () {
+                    if(!$(this).hasClass('checkAll')) {
+                        var infoArr = $(this).attr('id').split('-'), num = $(this).parent().parent().parent().find('.number .num span').html();
+                        var datas = {
+                            cid: infoArr[1],
+                            sid: infoArr[2],
+                            bid: userid,
+                            address: $('#address').val(),
+                            payway: $('#payway').val(),
+                            price: $(this).parent().parent().parent().find('.sAll').html().substring(1),
+                            num: num,
+                            state: 0,
+                            dtime: getNowFormatDate()
+                        };
+                        $.ajax({
+                            url:'/slog/add',
+                            contentType:'application/json',
+                            type:"post",
+                            data:JSON.stringify(datas),
+                            success:function (result) {
+                                if(result.code==200){
+                                    $.ajax({
+                                        url:"/commodity/update",
+                                        contentType:'application/json',
+                                        type:"POST",
+                                        data:JSON.stringify({id:infoArr[1], num:infoArr[3]-num}),
+                                        success:function(result){
+                                            if(result.code==200){
+                                                $.ajax({
+                                                    url:"/cart/update",
+                                                    contentType:'application/json',
+                                                    type:"POST",
+                                                    data:JSON.stringify({id:infoArr[0], state:1}),
+                                                    success:function(result){
+                                                        if(result.code==200){
+
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    })
+                                    layer.msg('购买成功',{
+                                        iocn:6,
+                                        time:500
+                                    },function () {
+                                        //重载父窗口 关闭当前窗口
+                                        parent.window.location.reload();
+                                        var iframeIndex=parent.layer.getFrameIndex(window.name);
+                                        parent.layer.close(iframeIndex);
+                                    })
+                                }else{
+                                    layer.msg("购买失败");
+                                }
+                            }
+                        })
+                    }
+                })
+            });
+
+            //删除购物车商品
+            $('.del').click(function(){
+                //单个删除
+                if($(this).parent().parent().hasClass("th")){
+                    var item = $(this);
+                    layer.confirm('确定从购物车移除？',function (index) {
+                        //执行删除功能
+                        var did = item.attr('id').replace('del-','');
+                        $.ajax({
+                            url:"/cart/delete",
+                            type:"POST",
+                            data:{"ids":did},
+                            success:function(result){
+                                if(result.code==200){
+                                    layer.msg("移除成功",{
+                                        icon:6,
+                                        time:500
+                                    },function(){
+                                        parent.window.location.reload();//重新页面
+                                        var iframeIndex = parent.layer.getFrameIndex(window.name);
+                                        parent.layer.close(iframeIndex);
+                                    });
+                                }else{
+                                    layer.msg("移除失败");
+                                }
+                            }
+                        })
+                        return false;
+                    });
+                }
+            });
+        })
+    });
+
+</script>
+</html>

@@ -1,0 +1,146 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form" lay-filter="updateSubmit">
+        <input type="hidden" name="id">
+        <input type="hidden" name="sellid">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">商品名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" lay-verify="required" lay-reqtext="社团名称不能为空"
+                       placeholder="请输入商品名称" value="" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">介绍</label>
+            <div class="layui-input-block">
+                <textarea name="content" placeholder="请输入商品介绍" value="" class="layui-input layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">价格</label>
+            <div class="layui-input-block">
+                <input type="number" step="0.01" name="price" lay-verify="required" lay-reqtext="社团管理者账号不能为空"
+                       placeholder="请输入价格" value="" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">商品图片</label>
+            <div class="layui-input-block">
+                <input type="text" name="img" lay-verify="required" lay-reqtext="社团名称不能为空"
+                       placeholder="请输入图片路径" value="" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">类型</label>
+            <div class="layui-input-block">
+                <input type="text" name="typee" lay-verify="required" lay-reqtext="社团名称不能为空"
+                       placeholder="请输入商品类型（多类型用,逗号隔开）" value="" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">商品数量</label>
+            <div class="layui-input-block">
+                <input type="number" name="num" lay-verify="required" lay-reqtext="社团名称不能为空"
+                       placeholder="请输入商品数量" value="" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">审核状态</label>
+            <div class="layui-input-block">
+                <select name="state" lay-verify="required" >
+                    <option value="1">已上架</option>
+                    <option value="3">已下架</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //获取当前时间 yyyy-MM-dd HH:mm:ss
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var second = date.getSeconds();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        if (hours >= 0 && hours <= 9) {
+            hours = "0" + hours;
+        }
+        if (minutes >= 0 && minutes <= 9) {
+            minutes = "0" + minutes;
+        }
+        if (second >= 0 && second <= 9) {
+            second = "0" + second;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + " " + hours + seperator2 + minutes + seperator2 + second;
+        return currentdate;
+    }
+    layui.use(['form', 'table','laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            laydate=layui.laydate,
+            $ = layui.$;
+
+        form.render();
+
+        /**
+         * 设计渲染form中的信息值
+         */
+        function setFormValues(data){
+            form.val("updateSubmit",{
+                "id":data.id,
+                "sellid":data.sellid,
+                "name":data.name,
+                "content":data.content,
+                "price":data.price,
+                "img":data.img,
+                "typee":data.typee,
+                "state":data.state,
+                "num":data.num,
+                "dtime":data.dtime
+            });
+        };
+
+        $.get("commodity/queryCommodityAll?id="+cId,{},function (data) {
+            var list = data;
+            if(list!=null || list.size()>0){
+                setFormValues(list.data[0]);
+            }
+            form.render();
+        },"json");
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            //获取表单中的数据信息
+            var datas=data.field;
+            addOrUpdateSubmit($,"commodity/update",datas);
+            return false;
+        });
+
+    });
+</script>

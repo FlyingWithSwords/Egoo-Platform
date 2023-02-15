@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>乐器商城</title>
+    <meta name="keywords" content="乐器商城">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/html/css/layui.css" media="all">
+    <link rel="stylesheet" href="/html/css/modules/code.css" media="all">
+    <link rel="stylesheet" href="/html/css/modules/laydate/default/laydate.css" media="all">
+    <link rel="stylesheet" href="/html/css/modules/layer/default/layer.css" media="all">
+</head>
+<body class="layui-layout-body" style="margin-top: 15px">
+<div class="layui-container">
+
+    <div class="layui-form layuimini-form" lay-filter="updateSubmit">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">数量</label>
+            <div class="layui-input-block">
+                <input type="number" step="1" name="num" lay-verify="required" lay-reqtext="社团管理者账号不能为空"
+                       placeholder="请输入购买数量" value="" class="layui-input">
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">地址</label>
+            <div class="layui-input-block">
+                <select name="address" lay-verify="required" id="address" lay-search="">
+                    <option value="">请选择你的地址</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">支付方式</label>
+            <div class="layui-input-block">
+                <select name="payway" lay-verify="required" >
+                    <option value="微信">微信</option>
+                    <option value="支付宝">支付宝</option>
+                    <option value="银行卡">银行卡</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">付款</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/js/base.js" charset="utf-8"></script>
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+<script src="js/public.js" charset="utf-8"></script>
+<script>
+    var userid = localStorage.getItem('userid');
+    layui.use(['form', 'table','laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+
+        form.render();
+
+        //查询所有的用户信息并渲染到select中
+        $.post("/address/queryAddressAll?uid="+userid,{},function (data) {
+            var list=data;
+            var select = document.getElementById("address");
+            if(list!=null || list.size()>0){
+                for(var i=0;i<list.data.length;i++){
+                    var option=document.createElement("option");
+                    option.setAttribute("value",list.data[i].content);
+                    option.innerText=list.data[i].content;
+                    select.appendChild(option);
+                }
+            }
+            form.render('select');
+        },"json");
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            //获取表单中的数据信息
+            var datas=data.field;
+            datas.cid = getQueryVariable('cid');
+            datas.sid = getQueryVariable('sid');
+            datas.bid = userid;
+            datas.price = datas.num*getQueryVariable('price');
+            datas.state = '0';
+            datas.dtime=getNowFormatDate();
+            $.ajax({
+                url:'/slog/add',
+                contentType:'application/json',
+                type:"post",
+                data:JSON.stringify(datas),
+                success:function (result) {
+                    if(result.code==200){
+                        $.ajax({
+                            url:"/commodity/update",
+                            contentType:'application/json',
+                            type:"POST",
+                            data:JSON.stringify({id:getQueryVariable('cid'), num:getQueryVariable('num')-datas.num}),
+                            success:function(result){
+                                if(result.code==200){
+                                    $.ajax({
+                                        url:"/cart/update",
+                                        contentType:'application/json',
+                                        type:"POST",
+                                        data:JSON.stringify({id:infoArr[0], state:1}),
+                                        success:function(result){
+                                            if(result.code==200){
+
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                        layer.msg('成功',{
+                            iocn:6,
+                            time:500
+                        },function () {
+                            //重载父窗口 关闭当前窗口
+                            parent.window.location.reload();
+                            var iframeIndex=parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(iframeIndex);
+                        })
+                    }else{
+                        layer.msg("失败");
+                    }
+                }
+            })
+            return false;
+        });
+
+    });
+</script>
+</html>

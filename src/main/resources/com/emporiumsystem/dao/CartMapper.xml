@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.emporiumsystem.dao.CartMapper">
+
+        <!-- 通用查询映射结果 -->
+        <resultMap id="BaseResultMap" type="com.emporiumsystem.model.Cart">
+            <id column="id" property="id"/>
+            <result column="cid" property="cid"/>
+            <result column="uid" property="uid"/>
+            <result column="state" property="state"/>
+            <result column="num" property="num"/>
+            <result column="dtime" property="dtime"/>
+        </resultMap>
+
+        <!-- 通用查询结果列 -->
+        <sql id="Base_Column_List">
+            id, cid, uid, state, num, dtime
+        </sql>
+
+    <resultMap id="queryCartAllMap" type="com.emporiumsystem.model.Cart" extends="BaseResultMap">
+        <association property="user" javaType="com.emporiumsystem.model.User">
+            <id column="uid" property="id"></id>
+            <result column="username" property="username"/>
+            <result column="chara" property="chara"/>
+            <result column="tel" property="tel"/>
+            <result column="email" property="email"/>
+        </association>
+        <association property="commodity" javaType="com.emporiumsystem.model.Commodity">
+            <id column="cid" property="id"/>
+            <result column="sellid" property="sellid"/>
+            <result column="name" property="name"/>
+            <result column="price" property="price"/>
+            <result column="img" property="img"/>
+            <result column="typee" property="typee"/>
+            <result column="cnum" property="num"/>
+        </association>
+    </resultMap>
+
+    <select id="queryCartAll" resultMap="queryCartAllMap"
+            parameterType="com.emporiumsystem.model.Cart">
+        SELECT
+            c.*,u.username,u.chara,u.tel,u.email,com.sellid,com.name,com.price,com.img,com.typee,com.num cnum
+        FROM
+            cart c
+        LEFT JOIN user u ON u.id = c.uid
+        LEFT JOIN commodity com ON com.id = c.cid
+        <where>
+            <if test="id!=null and id!=''">
+                and c.id =#{id}
+            </if>
+            <if test="cid!=null and cid!=''">
+                and c.cid =#{cid}
+            </if>
+            <if test="uid!=null and uid!=''">
+                and c.uid =#{uid}
+            </if>
+            <if test="(state!=null and state!='') || state==0">
+                and c.state =#{state}
+            </if>
+
+        </where>
+
+    </select>
+
+</mapper>

@@ -1,0 +1,69 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form" lay-filter="updateSubmit">
+        <input type="hidden" name="id" id="aId"/>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">地址</label>
+            <div class="layui-input-block">
+                <textarea name="content" placeholder="请输入地址" value="" class="layui-input layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'table','laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            laydate=layui.laydate,
+            $ = layui.$;
+
+        // 日期
+        // laydate.render({
+        //     elem: '#date',
+        //     trigger:'click'
+        // });
+        form.render();
+
+        /**
+         * 设计渲染form中的信息值
+         */
+        function setFormValues(data){
+            form.val("updateSubmit",{
+                id:data.id,
+                "uid":data.uid,
+                "content":data.content
+            });
+        }
+
+        $.get("address/queryAddressAll?id="+aId,{},function (data) {
+            var list = data;
+            if(list!=null || list.size()>0){
+                setFormValues(list.data[0]);
+            }
+            form.render();
+        },"json");
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            //获取表单中的数据信息
+            var datas=data.field;
+            datas.time=getNowFormatDate();
+            datas.uid = localStorage.getItem('userid');
+            addOrUpdateSubmit($,"address/update",datas);
+            return false;
+        });
+
+    });
+</script>

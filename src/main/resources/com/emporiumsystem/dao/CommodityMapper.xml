@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.emporiumsystem.dao.CommodityMapper">
+
+        <!-- 通用查询映射结果 -->
+        <resultMap id="BaseResultMap" type="com.emporiumsystem.model.Commodity">
+            <id column="id" property="id"/>
+            <result column="sellid" property="sellid"/>
+            <result column="name" property="name"/>
+            <result column="content" property="content"/>
+            <result column="price" property="price"/>
+            <result column="img" property="img"/>
+            <result column="typee" property="typee"/>
+            <result column="state" property="state"/>
+            <result column="num" property="num"/>
+            <result column="dtime" property="dtime"/>
+        </resultMap>
+
+        <!-- 通用查询结果列 -->
+        <sql id="Base_Column_List">
+            id, sellid, name, content, price, img, typee, state, num, dtime
+        </sql>
+
+    <resultMap id="queryCommodityAllMap" type="com.emporiumsystem.model.Commodity" extends="BaseResultMap">
+        <association property="user" javaType="com.emporiumsystem.model.User">
+            <id column="sellid" property="id"></id>
+            <result column="username" property="username"/>
+            <result column="chara" property="chara"/>
+            <result column="tel" property="tel"/>
+            <result column="email" property="email"/>
+        </association>
+    </resultMap>
+
+    <select id="queryCommodityAll" resultMap="queryCommodityAllMap"
+            parameterType="com.emporiumsystem.model.Commodity">
+        SELECT
+            c.*,u.username,u.chara,u.tel,u.email
+        FROM
+            commodity c
+        LEFT JOIN user u ON u.id = c.sellid
+        <where>
+            <if test="id!=null and id!=''">
+                and c.id =#{id}
+            </if>
+            <if test="sellid!=null and sellid!=''">
+                and c.sellid =#{sellid}
+            </if>
+            <if test="state!=null and state!=''">
+                and c.state =#{state}
+            </if>
+            <if test="name!=null and name!=''">
+                and c.name like concat("%",#{name},"%")
+            </if>
+            <if test="typee!=null and typee!=''">
+                and c.typee like concat("%",#{typee},"%")
+            </if>
+
+        </where>
+
+    </select>
+
+</mapper>

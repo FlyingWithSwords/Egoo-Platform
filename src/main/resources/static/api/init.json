@@ -1,0 +1,37 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "page/user/index.html"
+  },
+  "logoInfo": {
+    "title": "乐器商城管理系统",
+    "image": "images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+        {
+          "title": "个人信息管理",
+          "href": "page/user/index.html",
+          "icon": "fa fa-user",
+          "target": "_self"
+        },
+        {
+          "title": "用户管理",
+          "href": "page/admin/index.html",
+          "icon": "fa fa-user",
+          "target": "_self"
+        },
+        {
+          "title": "商品管理",
+          "href": "page/commodity/index.html",
+          "icon": "fa fa-building",
+          "target": "_self"
+        },
+        {
+          "title": "订单管理",
+          "href": "page/slog/index.html",
+          "icon": "fa fa-smile-o",
+          "target": "_self"
+        }
+  ]
+}

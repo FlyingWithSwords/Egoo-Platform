@@ -1,0 +1,92 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form" lay-filter="updateSubmit">
+        <input type="hidden" name="id">
+        <input type="hidden" name="cid">
+        <input type="hidden" name="uid">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">星级</label>
+            <div class="layui-input-block">
+                <div id="star"></div>
+                <input type="hidden" name="star" lay-verify="required" value="1" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">评价</label>
+            <div class="layui-input-block">
+                <textarea name="content" placeholder="请输入评价" lay-verify="required" value="" class="layui-input layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //获取当前时间 yyyy-MM-dd HH:mm:ss
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var second = date.getSeconds();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        if (hours >= 0 && hours <= 9) {
+            hours = "0" + hours;
+        }
+        if (minutes >= 0 && minutes <= 9) {
+            minutes = "0" + minutes;
+        }
+        if (second >= 0 && second <= 9) {
+            second = "0" + second;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + " " + hours + seperator2 + minutes + seperator2 + second;
+        return currentdate;
+    }
+    layui.use(['form', 'table','laydate','rate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            rate = layui.rate,
+            table = layui.table,
+            laydate=layui.laydate,
+            $ = layui.$;
+
+        var star = rate.render({
+            text: true,
+            elem: '#star',
+            value: 1
+        });
+        $('#star').click(function () {
+            $('input[name=star]').val(star.config.value);
+        });
+        form.render();
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            //获取表单中的数据信息
+            var datas=data.field;
+            datas.cid = cId;
+            datas.uid = localStorage.getItem('userid');
+            datas.dtime = getNowFormatDate();
+            addOrUpdateSubmit($,"evaluate/add",datas);
+            return false;
+        });
+
+    });
+</script>

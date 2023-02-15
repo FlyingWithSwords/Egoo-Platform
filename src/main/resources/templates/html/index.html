@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>乐器商城</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="/html/css/layui.css" media="all">
+<link rel="stylesheet" href="/html/css/modules/code.css" media="all">
+<link rel="stylesheet" href="/html/css/modules/laydate/default/laydate.css" media="all">
+<link rel="stylesheet" href="/html/css/modules/layer/default/layer.css" media="all">
+<!--<script src="https://webapi.amap.com/maps?v=2.0&key=49a29cfa2e7dbeb15454a68ca1a4d959"></script>-->
+<script src="/html/js/jquery-3.4.1.js" charset="utf-8"></script>
+<script src="/html/js/layui.js" charset="utf-8"></script>
+    <style>
+        .top{ text-align: center; margin-top: 20px;margin-bottom: 30px; }
+        .search{ width: 560px;height: 42px;border-radius: 20px;border: 1px solid #ccc;background-color: #F1F3F4;font-family: 'Roboto',arial,sans-serif;padding-left: 18px;margin-right: 15px; }
+        .img-fluid {
+            max-width: 100%;
+            width: 100%;
+            height: 300px;
+            border-radius: 0.5em;
+        }
+        .product {
+            border-radius: 0.5em;
+            box-shadow: 2px 2px 20px rgb(0 0 0 / 15%);
+        }
+        .product-image {
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+        .product-content {
+            padding: 5px 10px;
+        }
+        .product-content .price {
+            font-size: 18px;
+            color: #f00;
+        }
+        .product-content a {
+            font-size: 14px;
+            color: #000;
+            text-decoration: none;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            height: 30px;
+        }
+        .layui-flow-more {
+            clear: both;
+        }
+        .typee {
+            width: 500px;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body class="layui-layout-body" style="">
+<div id="top"></div>
+<div class="layui-layout layui-layout-admin site-demo-fixed">
+    <div class="layui-header header header-demo layui-bg-gray" summer>
+        <div class="layui-logo" style="width:auto; margin:0 25px;"><a href="" class="logo">
+            <img src="/images/logo.png" alt="logo" style="width: 50px;"/>
+            <span class="layui-nav-title" style="font-size: 18px;font-weight: bold">乐器商城</span>
+        </a></div>
+        <!-- 头部区域（可配合layui 已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left"><!-- 移动端显示 -->
+            <li class="layui-nav-item layui-this"><a href="index.html" style="color:#666;">首页</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;" style="color:#666;">分类</a>
+                <dl class="layui-nav-child layui-anim layui-anim-upbit typee">
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="cart.html" style="color:#666;">购物车</a>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right" style="padding: 0 9px;">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <i class="layui-icon layui-icon-user layui-nav-img" style="color: #fff; padding: 10px; background: #9f9f9f;"></i>
+                    <i class="layui-icon layui-icon-down layui-nav-more"></i></a>
+                <dl class="layui-nav-child layui-anim layui-anim-upbit">
+                    <dd><a href="/login.html" id="login">登录</a></dd>
+                    <dd><a href="/register.html" id="register">注册</a></dd>
+                    <dd><a href="/loginOut" id="loginout" style="display: none;" onclick="loginOut()">退出登录</a></dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="layui-body" style="position: relative;top:72px;left:0px;padding: 0 50px;">
+    <form class="layui-form" style="text-align: center;">
+        <input type="text" name="" class="search" id="search" placeholder="搜索商品"/>
+        <input type="button" value="搜索" class="layui-btn layui-btn-normal layui-btn-radius" id="toSearch"/>
+    </form>
+    <div class="">
+        <div class="layui-col-md12 layui-col-xs12 comlist" style="margin: 1px;"></div>
+    </div>
+</div>
+<div class="layadmin-body-shade" layadmin-event="shade"></div>
+</body>
+<script src="js/public.js" charset="utf-8"></script>
+<script>
+    var username=localStorage.getItem("username");
+
+    layui.use(['form','flow','element'], function () {
+        var $ = layui.jquery,
+            flow = layui.flow;
+
+        window.onSearch = function(page, limit, keyword, type){
+            $('.comlist').html('');
+            flow.load({
+                elem: '.comlist' //指定列表容器
+                ,isAuto: true
+                ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+                    var lis = [];
+                    $.getJSON("/commodity/queryCommodityAll?page="+page+"&limit="+limit+"&name="+keyword+"&typee="+type+"&state=1", function (result) {
+                        var data = result.data;
+                        layui.each(data, function(index, item){
+                            lis.push('<div class="layui-col-xs3 layui-col-md3" style="margin: 20px 0;">\n' +
+                                '                <div class="layui-card top-panel product" style="width: 85%;">\n' +
+                                '                    <div class="layui-card-body">\n' +
+                                '                        <a href="/html/detail.html?id='+item.id+'">' +
+                                '                            <div class="product-image"><img src="'+item.img+'" class="img-fluid"></div>' +
+                                '                        </a>' +
+                                '                        <div class="product-content">\n' +
+                                '                            <div class="price">￥'+item.price+'</div>\n' +
+                                '                            <span class="title">\n' +
+                                '                                <a href="/html/detail.html?id='+item.id+'">'+item.name+'</a>\n' +
+                                '                            </span>\n' +
+                                '                        </div>' +
+                                '                    </div>\n' +
+                                '                </div>\n' +
+                                '            </div>');
+                        });
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < (result.count/limit));
+                    });
+                }
+            });
+        }
+
+        onSearch(1, 9, '', typeview);
+
+        $('#search').attr('placeholder', '搜索' + decodeURI(typeview) + '商品');
+
+        $('#toSearch').on('click', function () {
+            onSearch(1,9,$('#search').val(),typeview);
+        });
+    });
+</script>
+</html>

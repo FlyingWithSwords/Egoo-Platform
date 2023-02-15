@@ -1,0 +1,31 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "page/user/index.html"
+  },
+  "logoInfo": {
+    "title": "个人中心",
+    "image": "images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "个人信息管理",
+      "href": "page/user/index.html",
+      "icon": "fa fa-user",
+      "target": "_self"
+    },
+    {
+      "title": "商品管理",
+      "href": "page/commodity/sIndex.html",
+      "icon": "fa fa-building",
+      "target": "_self"
+    },
+    {
+      "title": "订单管理",
+      "href": "page/slog/sIndex.html",
+      "icon": "fa fa-smile-o",
+      "target": "_self"
+    }
+  ]
+}

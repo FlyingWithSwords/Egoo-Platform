@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.emporiumsystem.dao.SlogMapper">
+
+        <!-- 通用查询映射结果 -->
+        <resultMap id="BaseResultMap" type="com.emporiumsystem.model.Slog">
+            <id column="id" property="id"/>
+            <result column="cid" property="cid"/>
+            <result column="sid" property="sid"/>
+            <result column="bid" property="bid"/>
+            <result column="price" property="price"/>
+            <result column="payway" property="payway"/>
+            <result column="address" property="address"/>
+            <result column="num" property="num"/>
+            <result column="state" property="state"/>
+            <result column="dtime" property="dtime"/>
+        </resultMap>
+
+        <!-- 通用查询结果列 -->
+        <sql id="Base_Column_List">
+            id, cid, sid, bid, price, payway, address, state, dtime
+        </sql>
+
+    <resultMap id="querySlogAllMap" type="com.emporiumsystem.model.Slog" extends="BaseResultMap">
+        <association property="sell" javaType="com.emporiumsystem.model.User">
+            <id column="sid" property="id"></id>
+            <result column="susername" property="username"/>
+            <result column="stel" property="tel"/>
+            <result column="semail" property="email"/>
+        </association>
+        <association property="buy" javaType="com.emporiumsystem.model.User">
+            <id column="bid" property="id"></id>
+            <result column="busername" property="username"/>
+            <result column="btel" property="tel"/>
+            <result column="bemail" property="email"/>
+        </association>
+        <association property="commodity" javaType="com.emporiumsystem.model.Commodity">
+            <id column="cid" property="id"/>
+            <result column="sid" property="sellid"/>
+            <result column="name" property="name"/>
+            <result column="cprice" property="price"/>
+            <result column="img" property="img"/>
+        </association>
+    </resultMap>
+
+    <select id="querySlogAll" resultMap="querySlogAllMap"
+            parameterType="com.emporiumsystem.model.Slog">
+        SELECT
+            s.*,sell.username susername,sell.tel stel,sell.email semail,
+            buy.username busername,buy.tel btel,buy.email bemail,com.name,com.price cprice,com.img
+        FROM
+            slog s
+        LEFT JOIN user sell ON sell.id = s.sid
+        LEFT JOIN user buy ON buy.id = s.bid
+        LEFT JOIN commodity com ON com.id = s.cid
+        <where>
+            <if test="id!=null and id!=''">
+                and s.id =#{id}
+            </if>
+            <if test="cid!=null and cid!=''">
+                and s.cid =#{cid}
+            </if>
+            <if test="sid!=null and sid!=''">
+                and s.sid =#{sid}
+            </if>
+            <if test="bid!=null and bid!=''">
+                and s.bid =#{bid}
+            </if>
+            <if test="state!=null and state!=''">
+                and s.state =#{tate}
+            </if>
+            <if test="commodity!=null">
+                <if test="commodity.name!=null and commodity.name!=''">
+                    and com.name like concat('%',#{commodity.name},'%')
+                </if>
+            </if>
+        </where>
+
+    </select>
+
+    <select id="queryStat" resultType="com.emporiumsystem.model.Stat">
+        <if test="type!=null and type!=''">
+            SELECT
+            SUM(price) AS counts,
+            ${type} AS name
+            FROM
+            `slog`
+            <if test="where!=null and where!=''">
+                 ${where}
+            </if>
+            GROUP BY ${type}
+        </if>
+    </select>
+
+</mapper>

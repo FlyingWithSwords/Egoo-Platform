@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.emporiumsystem.dao.EvaluateMapper">
+
+        <!-- 通用查询映射结果 -->
+        <resultMap id="BaseResultMap" type="com.emporiumsystem.model.Evaluate">
+            <id column="id" property="id"/>
+            <result column="cid" property="cid"/>
+            <result column="uid" property="uid"/>
+            <result column="content" property="content"/>
+            <result column="star" property="star"/>
+            <result column="dtime" property="dtime"/>
+        </resultMap>
+
+        <!-- 通用查询结果列 -->
+        <sql id="Base_Column_List">
+            id, cid, uid, content, star, dtime
+        </sql>
+
+    <resultMap id="queryEvaluateAllMap" type="com.emporiumsystem.model.Evaluate" extends="BaseResultMap">
+        <association property="user" javaType="com.emporiumsystem.model.User">
+            <id column="uid" property="id"></id>
+            <result column="username" property="username"/>
+            <result column="chara" property="chara"/>
+            <result column="tel" property="tel"/>
+            <result column="email" property="email"/>
+        </association>
+        <association property="commodity" javaType="com.emporiumsystem.model.Commodity">
+            <id column="cid" property="id"/>
+            <result column="sellid" property="sellid"/>
+            <result column="name" property="name"/>
+            <result column="price" property="price"/>
+            <result column="img" property="img"/>
+            <result column="typee" property="typee"/>
+            <result column="cnum" property="num"/>
+        </association>
+    </resultMap>
+
+    <select id="queryEvaluateAll" resultMap="queryEvaluateAllMap"
+            parameterType="com.emporiumsystem.model.Evaluate">
+        SELECT
+            e.*,u.username,u.chara,u.tel,u.email,com.sellid,com.name,com.price,com.img,com.typee,com.num cnum
+        FROM
+            evaluate e
+        LEFT JOIN user u ON u.id = e.uid
+        LEFT JOIN commodity com ON com.id = e.cid
+        <where>
+            <if test="id!=null and id!=''">
+                and e.id =#{id}
+            </if>
+            <if test="cid!=null and cid!=''">
+                and e.cid =#{cid}
+            </if>
+            <if test="uid!=null and uid!=''">
+                and e.uid =#{uid}
+            </if>
+            <if test="commodity!=null">
+                <if test="commodity.name!=null and commodity.name!=''">
+                    and com.name =#{commodity.name}
+                </if>
+            </if>
+
+        </where>
+
+    </select>
+
+</mapper>

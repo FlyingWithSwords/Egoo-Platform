@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>乐器商城</title>
+    <meta name="keywords" content="乐器商城">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/html/css/layui.css" media="all">
+    <link rel="stylesheet" href="/html/css/modules/code.css" media="all">
+    <link rel="stylesheet" href="/html/css/modules/laydate/default/laydate.css" media="all">
+    <link rel="stylesheet" href="/html/css/modules/layer/default/layer.css" media="all">
+    <style type="text/css">
+        .commentwrap{
+            margin-top: 40px;
+        }
+        .commeta{ margin-left: 45px;}
+        .commentwrap .left{
+            display: inline-block;
+        }
+        .commentwrap .right{
+            font-size: 12px;
+            color: #9098b5;
+        }
+        .commentwrap .profile {
+            float: right;
+        }
+        .commentwrap .comment-body {
+            margin-top: 5px;
+            margin-left: 45px;
+            margin-bottom: 30px;
+        }
+        .shopimg{ border-radius: 6px;
+        }
+        .typee {
+            width: 500px;
+            overflow: auto;
+        }
+    </style>
+    <script src="/html/js/jquery-3.4.1.js" charset="utf-8"></script>
+    <script src="/html/js/layui.js" charset="utf-8"></script>
+</head>
+<body class="layui-layout-body" style="">
+<div class="layui-layout layui-layout-admin site-demo-fixed">
+    <div class="layui-header header header-demo layui-bg-gray" summer>
+        <div class="layui-logo" style="width:auto; margin:0 25px;"><a href="" class="logo">
+            <img src="/images/logo.png" alt="logo" style="width: 50px;"/>
+            <span class="layui-nav-title" style="font-size: 18px;font-weight: bold">乐器商城</span>
+        </a></div>
+        <!-- 头部区域（可配合layui 已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left"><!-- 移动端显示 -->
+            <li class="layui-nav-item layui-this"><a href="index.html" style="color:#666;">首页</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;" style="color:#666;">分类</a>
+                <dl class="layui-nav-child layui-anim layui-anim-upbit typee">
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="cart.html" style="color:#666;">购物车</a>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right" style="padding: 0 9px;">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <i class="layui-icon layui-icon-user layui-nav-img" style="color: #fff; padding: 10px; background: #9f9f9f;"></i>
+                    <i class="layui-icon layui-icon-down layui-nav-more"></i></a>
+                <dl class="layui-nav-child layui-anim layui-anim-upbit">
+                    <dd><a href="/login.html" id="login">登录</a></dd>
+                    <dd><a href="/register.html" id="register">注册</a></dd>
+                    <dd><a href="/loginOut" id="loginout" style="display: none;" onclick="loginOut()">退出登录</a></dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="layui-card-body" style="position: relative;top:72px;left:0px;">
+    <div class="layui-row">
+        <div class="layui-col-sm12 layui-panel-window layui-bg-gray panel-radius">
+            <div id="shop-content" class="panel-radius" style="text-align: center; padding: 12px;"></div>
+        </div>
+    </div>
+    <div class="comments">
+        <div class="layui-form">
+            <div class="layui-form-item">
+                <textarea id="commentarea" name="content" class="layui-textarea" lay-verify="required" placeholder="分享你的想法"></textarea>
+            </div>
+            <div class="layui-form-item">
+                <a id="mylevstar1" onclick="onStar(1)"><i class="layui-icon layui-icon-star" style="color:#f70;"></i></a>
+                <a id="mylevstar2" onclick="onStar(2)"><i class="layui-icon layui-icon-star" style="color:#f70;"></i></a>
+                <a id="mylevstar3" onclick="onStar(3)"><i class="layui-icon layui-icon-star" style="color:#f70;"></i></a>
+                <a id="mylevstar4" onclick="onStar(4)"><i class="layui-icon layui-icon-star" style="color:#f70;"></i></a>
+                <a id="mylevstar5" onclick="onStar(5)"><i class="layui-icon layui-icon-star" style="color:#f70;"></i></a>
+                <input type="hidden" name="lev" id="lev" value="0"/>
+                <button class="layui-btn" lay-submit lay-filter="formComment" style="float: right;">发表评论</button>
+            </div>
+        </div>
+        <div class="comment-box">
+            <h4 class="comment-count"></h4>
+            <ul class="commentwrap">
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/js/base.js" charset="utf-8"></script>
+<script src="/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+<script src="js/public.js" charset="utf-8"></script>
+<script>
+    //获取当前时间 yyyy-MM-dd HH:mm:ss
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var second = date.getSeconds();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        if (hours >= 0 && hours <= 9) {
+            hours = "0" + hours;
+        }
+        if (minutes >= 0 && minutes <= 9) {
+            minutes = "0" + minutes;
+        }
+        if (second >= 0 && second <= 9) {
+            second = "0" + second;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + " " + hours + seperator2 + minutes + seperator2 + second;
+        return currentdate;
+    }
+
+    var userid=localStorage.getItem("userid");
+    $.ajaxSetup({async:false});
+</script>
+<script>
+    var positList={};
+    var cid=getQueryVariable('id'), sid = -1, price = 0, allnum = 0;
+    $.ajax({
+        url: '/commodity/queryCommodityAll?id='+cid,
+        success: function (data) {
+            if (data.code == 0){
+                positList=data.data;
+            }
+            return false;
+        }
+    });
+
+    $.getJSON("/evaluate/queryEvaluateAll?cid="+cid, function (result) {
+        var data = result.data;
+        positList[0].aver = 0;
+        $('.comment-count').html(result.count+'条评论');
+        $('.comment-main').remove();
+        for (var i = 0; i < data.length; i++) {
+            var levstar='';
+            if(data[i].star){
+                positList[0].aver += data[i].star;
+                for(var j=0;j<data[i].star;j++){
+                    levstar += '<i class="layui-icon layui-icon-star-fill" style="color:#f70;"></i>';
+                }
+                for(var k=0;k<5-data[i].star;k++){
+                    levstar += '<i class="layui-icon layui-icon-star" style="color:#f70;"></i>';
+                }
+            }
+            else{
+                for(var k=0;k<5;k++){
+                    levstar += '<i class="layui-icon layui-icon-star" style="color:#f70;"></i>';
+                }
+            }
+            $('.commentwrap').append('<li>\n' +
+                '                    <div class="comment-main">\n' +
+                '                        <div class="profile">\n' +
+                '                            <div>'+levstar+'</div>' +
+                '                        </div>\n' +
+                '                        <!-- 用户名称,时间 -->\n' +
+                '                        <section class="commeta">\n' +
+                '                            <div class="pad-btm left">\n' +
+                '                                <a href="javascript:;" class="mes-user author">' + data[i].user.username + '</a>\n' +
+                '                            </div>\n' +
+                '                            <div class="right">\n' +
+                '                                <div class="info">\n' +
+                '                                    <div class="comment-time">' + data[i].dtime + '</div>\n' +
+                '                                </div>\n' +
+                '                            </div>\n' +
+                '                        </section>\n' +
+                '                        <!-- 评论内容 -->\n' +
+                '                        <div class="article-content article comment-body">\n' +
+                '                            <p>' + data[i].content + '</p>\n' +
+                '                        </div>\n' +
+                '                    </div>\n' +
+                '                </li>');
+        }
+        positList[0].aver /= result.count;
+    });
+
+    layui.use(['form','laypage','layer'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            laypage = layui.laypage;
+        form.on('submit(formComment)', function(data){
+            //获取表单中的数据信息
+            var datas=data.field;
+            datas.cid=cid;
+            datas.userid=localStorage.getItem("userid");
+            datas.dtime=getNowFormatDate();
+            if(localStorage.getItem("userid")!=null){
+                $.ajax({
+                    url:"/evaluate/add",
+                    contentType:'application/json',
+                    type:"post",
+                    data:JSON.stringify(datas),
+                    success:function (result) {
+                        if(result.code==200){
+                            layer.msg('评论成功', function () {
+                                window.location = 'detail.html?id='+cid;
+                            });
+                        }else{
+                            layer.msg("评论失败");
+                        }
+                    }
+                })
+            }
+            else{
+                layer.msg('请先登录');
+            }
+            return false;
+        });
+
+        window.addCart = function() {
+            var datas = {
+                cid: cid,
+                uid: userid,
+                num: 1,
+                state: 0,
+                dtime: getNowFormatDate()
+            };
+            if(userid){
+                $.ajax({
+                    url:'/cart/add',
+                    contentType:'application/json',
+                    type:"post",
+                    data:JSON.stringify(datas),
+                    success:function (result) {
+                        if(result.code==200){
+                            layer.msg('成功',{
+                                iocn:6,
+                                time:500
+                            },function () {
+                                //重载父窗口 关闭当前窗口
+                                parent.window.location.reload();
+                                var iframeIndex=parent.layer.getFrameIndex(window.name);
+                                parent.layer.close(iframeIndex);
+                            })
+                        }else{
+                            layer.msg("失败");
+                        }
+                    }
+                })
+            }
+            else
+                layer.msg('请先登录');
+        }
+
+        window.toBuy = function() {
+            if(userid){
+                layer.open({
+                    title: '支付信息',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:false,
+                    shadeClose: true,
+                    area: ['500px', '300px'],
+                    content: 'payinfo.html?cid='+cid+'&sid='+sid+'&price='+price+'&num='+allnum,
+                });
+                $.ajax({
+                    url: '/commodity/queryCommodityAll?id='+cid,
+                    success: function (data) {
+                        if (data.code == 0){
+                            positList=data.data;
+                        }
+                        return false;
+                    }
+                });
+            }
+            else
+                layer.msg('请先登录');
+        }
+    })
+
+    function showShopDetail(element) {
+        sid = element.sellid;
+        price = element.price;
+        allnum = element.num;
+        var shoplevicon = '';
+        if(element.aver){
+            for(var j=0;j<element.aver;j++){
+                shoplevicon += '<i class="layui-icon layui-icon-star-fill" style="color:#f70;"></i>';
+            }
+            for(var k=0;k<5-element.aver;k++){
+                shoplevicon += '<i class="layui-icon layui-icon-star" style="color:#f70;"></i>';
+            }
+        }
+        else{
+            shoplevicon = '暂无评级';
+        }
+        var content = [
+            element.img==null||element.img==''?'':'<img src="'+element.img+'" class="layui-col-sm12 layui-col-xs4 layui-col-md4 shopimg"></img>',
+            '<div class="layui-col-sm12 layui-col-md8 layui-col-xs8" style="padding:0px 0px 4px;"><h1 style="font-weight: bold;margin: 12px 3px;">'+element.name+'</h1>'+
+            '<p>评级： '+shoplevicon+'</p>' +
+            '<span style="color: #ff5050;font-size: 32px;font-weight: bold;line-height: 40px;">￥'+element.price+'</span>' +
+            '<p>类别：'+element.typee+'</p>'+
+            '<p style="font-size: 12px;margin: 9px 0;">'+(element.content==null||element.content==''?'暂无介绍信息':element.content)+'</p>'+
+            '            <div class="layui-btn-container" style="text-align: center;">\n' +
+            '                <a href="javascript:;" class="layui-btn layui-btn-checked" id="cart" onclick="addCart()"><i class="layui-icon layui-icon-cart"> </i>加入购物车</a>\n' +
+            '                <a href="javascript:;" class="layui-btn layui-btn-normal" onclick="toBuy()"><i class="layui-icon layui-icon-dollar"> </i>现在购买</a>\n' +
+            '            </div>' +
+            '</div>'
+        ]
+        $('#shop-content').html(content);
+        loadCart();
+    }
+    showShopDetail(positList[0]);
+
+    function onStar(num) {
+        for(var i=0;i<num;i++){
+            $('#mylevstar'+(i+1)).html('<i class="layui-icon layui-icon-star-fill" style="color:#f70;"></i>');
+        }
+        for(var i=4;i>=num;i--){
+            $('#mylevstar'+(i+1)).html('<i class="layui-icon layui-icon-star" style="color:#f70;"></i>');
+        }
+        $('#lev').val(num);
+    }
+
+    function loadCart() {
+        $.ajax({
+            url: '/cart/queryCartAll?state=0&uid='+userid+'&cid='+cid,
+            success: function (data) {
+                if (data.code == 0 && data.data.length>0){
+                    $('#cart').addClass('layui-btn-disabled').attr('onclick', '').html('<i class="layui-icon layui-icon-cart"> </i>已在购物车');
+                }
+                return false;
+            }
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,164 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form" lay-filter="updateSubmit">
+        <div class="layui-form-item">
+            <input type="hidden" name="id" id="userId"/>
+            <input type="hidden" name="chara" id="chara"/>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">登录名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="username" lay-verify="required" lay-reqtext="登录名不能为空" placeholder="请输入登录名" value="" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">老密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="oldPwd" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">新密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="newPwd" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">再次输入新密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="newPwd2" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系电话</label>
+                <div class="layui-input-block">
+                    <input type="text" name="tel" placeholder="请输入联系电话" value="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" name="email" placeholder="请输入联系邮箱" value="" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="updateSubmit">确认保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var userid=localStorage.getItem("userid");
+    layui.use(['form', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            // table = layui.table,
+            $ = layui.$;
+
+        /**
+         * 设计渲染form中的信息值
+         */
+        function setFormValues(data){
+            form.val("updateSubmit",{
+                userId:data.id,
+                "username":data.username,
+                "password":data.password,
+                "email":data.email,
+                "tel":data.tel,
+                "chara":data.chara
+            });
+        }
+
+        $.get("user/queryUserAll?id="+userid,{},function (data) {
+            var list = data;
+            if(list!=null || list.size()>0){
+                setFormValues(list.data[0]);
+            }
+            form.render();
+        },"json");
+
+        //监听提交
+        form.on('submit(updateSubmit)', function (data) {
+            // console.log(data.field);
+            data=data.field;
+            data.id = localStorage.getItem('userid');
+            if(data.oldPwd!=null&&data.oldPwd!='') {
+                if (data.newPwd2 != data.newPwd) {
+                    layer.msg("两次密码不一致，请重新输入")
+                } else {
+                    //向后台发送数据并进行修改操作
+                    $.ajax({
+                        url: "user/update1",
+                        type: "POST",
+                        // contentType:"application/json",
+                        data: {oldPwd: data.oldPwd, newPwd: data.newPwd, id: data.id},
+                        success: function (result) {
+                            if (result.code == 200) {
+                                layer.msg("修改成功", {
+                                    icon: 6,
+                                    time: 500
+                                }, function () {
+                                    $.ajax({
+                                        url: "user/update",
+                                        type: "POST",
+                                        contentType:"application/json",
+                                        data: JSON.stringify(data),
+                                        success: function (result) {
+                                            if (result.code == 200) {
+                                                layer.msg("修改成功", {
+                                                    icon: 6,
+                                                    time: 500
+                                                }, function () {
+                                                    parent.window.location.reload();//重新页面
+                                                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                                                    parent.layer.close(iframeIndex);
+                                                });
+
+                                            } else {
+                                                layer.msg("修改失败");
+                                            }
+                                        }
+                                    })
+                                });
+
+                            } else {
+                                layer.msg("修改失败");
+                            }
+                        }
+                    })
+                }
+            }
+            else{
+                $.ajax({
+                    url: "user/update",
+                    type: "POST",
+                    contentType:"application/json",
+                    data: JSON.stringify(data),
+                    success: function (result) {
+                        console.log(result)
+                        if (result.code == 200) {
+                            layer.msg("修改成功", {
+                                icon: 6,
+                                time: 500
+                            }, function () {
+                                parent.window.location.reload();//重新页面
+                                var iframeIndex = parent.layer.getFrameIndex(window.name);
+                                parent.layer.close(iframeIndex);
+                            });
+
+                        } else {
+                            layer.msg("修改失败");
+                        }
+                    }
+                })
+            }
+
+            return false;
+        });
+    });
+</script>
