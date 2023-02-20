@@ -66,4 +66,4 @@
 #### 捐献
 
 如果觉得本仓库有用，赏赐一块钱，买杯奶茶喝可好？感谢您了~  
-<div align=center><img src="images/ab64da39ed5da229cd165e48a5b002b.jpg" width="200px" alt="微信支付"/></div>
+<div align=center><img src="https://gitee.com/flying-with-swords/book-exchange-community/raw/master/images/ab64da39ed5da229cd165e48a5b002b.jpg" width="200px" alt="微信支付"/></div>
