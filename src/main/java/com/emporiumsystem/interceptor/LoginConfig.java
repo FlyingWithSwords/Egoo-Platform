@@ -18,6 +18,7 @@ public class LoginConfig implements WebMvcConfigurer {
                 "/html/**",
                 "/loginIn",
                 "/commodity/**",
+                "/user/add**",
                 "/evaluate/queryEvaluateAll**",
                 "/cart/**",
                 "/**/login.html",
