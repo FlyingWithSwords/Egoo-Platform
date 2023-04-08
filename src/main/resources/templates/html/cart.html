@@ -517,12 +517,15 @@
                             type:"post",
                             data:JSON.stringify(datas),
                             success:function (result) {
-                                if(result.code==200){
+                                var newnum = infoArr[3]-num;
+                                if(newnum<0)
+                                    layer.msg("库存不足，请等待商家补货！！！");
+                                else if(result.code==200){
                                     $.ajax({
                                         url:"/commodity/update",
                                         contentType:'application/json',
                                         type:"POST",
-                                        data:JSON.stringify({id:infoArr[1], num:infoArr[3]-num}),
+                                        data:JSON.stringify({id:infoArr[1], num:newnum}),
                                         success:function(result){
                                             if(result.code==200){
                                                 $.ajax({
