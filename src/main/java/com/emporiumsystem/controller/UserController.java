@@ -60,9 +60,19 @@ public class UserController {
         return R.ok();
     }
 
-
     @ApiOperation(value = "更新")
     @RequestMapping("/update")
+    public R update(@RequestBody User user){
+        int num= userService.updateData(user);
+        if(num>0){
+            return R.ok();
+        }else{
+            return R.fail("修改失败");
+        }
+    }
+
+    @ApiOperation(value = "更新")
+    @RequestMapping("/update1")
     public R update(String oldPwd,String newPwd,Integer id){
         //根据id获取当前的数据记录
         User user=userService.findById(new Long(id));
@@ -71,7 +81,7 @@ public class UserController {
             userService.updateData(user);
             return R.ok();
         }else{
-            return R.fail("两次密码不一致");
+            return R.fail("旧密码错误");
         }
     }
 
